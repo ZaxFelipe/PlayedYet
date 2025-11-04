@@ -1,12 +1,12 @@
 :root {
-    --primary-color: #12171c;
-    --secondary-color: #232438;
-    --accent-color: #2b6c91;
+    --primary-color: #141926;
+    --secondary-color: #19132e;
+    --accent-color: #592EF2;
     --text-primary: #ffffff;
     --text-secondary: #a9adc1;
     --card-bg: #2a2c42;
     --danger-color: #ff5757;
-    --success-color: #57ffb3;
+    --success-color: #29F280;
     --extra-info-color: #ef1196;
 }
 
@@ -219,7 +219,7 @@ body {
 }
 
 .btn-primary:hover {
-    background-color: #45c4dd;
+    background-color: #29F280;
     transform: translateY(-2px);
 }
 

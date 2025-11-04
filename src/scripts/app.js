@@ -477,7 +477,7 @@ function renderGames() {
                     </div>
                     <div class="mb-3 d-flex justify-content-between align-items-center">
                         <div class="game-rating">
-                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning note-icon"></i>
                             <span>${game.rating ? game.rating.toFixed(1) : '-'}/10</span>
                         </div>
                         <span class="game-difficulty difficulty-${game.difficulty?.toLowerCase()}">${game.difficulty || '-'}</span>
@@ -492,7 +492,7 @@ function renderGames() {
                                 style="width: ${Math.min((game.hours / 100) * 100, 100)}%">
                             </div>
                         </div>
-                        ${game.completionDate ? `<div class="text-center mt-2 completion-date-info"><i class="fas fa-check-circle me-2"></i><strong>Zerado em:</strong> ${formatCompletionDate(game.completionDate)}</div>` : ''}
+                        ${game.completionDate ? `<div class="text-center mt-2 completion-date-info"><i class="fas fa-solid fa-trophy me-2"></i><strong>Zerado em:</strong> ${formatCompletionDate(game.completionDate)}</div>` : ''}
                     </div>
                     <div class="mt-3 d-flex justify-content-end">
                         <button class="btn btn-outline-primary btn-sm" onclick="openEditGame(${game.id})"
