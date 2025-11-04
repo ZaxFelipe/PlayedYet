@@ -10,4 +10,4 @@ como tempo de jogo, data de finalização e plataforma podendo pesquisar e filtr
 
 - Pagina de estatisticas mostrando tempo total jogado por Tag, Genero
 
--Download automatico de capas usando rawg (coloque sua api key na pagina de configurações)
+- Download automatico de capas usando rawg (coloque sua api key na pagina de configurações)
