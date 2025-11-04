@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PlayedYet</title>
+    <link rel="stylesheet" href="lib/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="assets/icon-transparent.ico" alt="PlayedYet" class="navbar-logo me-2">
+                PlayedYet
+            </a>
+            <div class="navbar-nav">
+                <a class="nav-link active" href="#" data-view="games"><i class="fas fa-gamepad me-2"></i>Library</a>
+                <a class="nav-link" href="#" data-view="toplay"><i class="fas fa-list-check me-2"></i>To be played</a>
+                <a class="nav-link" href="#" data-view="stats"><i class="fas fa-chart-bar me-2"></i>Statistics</a>
+                <a class="nav-link" href="#" data-view="settings"><i class="fas fa-cog me-2"></i>Settings</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Search and Filter Bar -->
+        <div class="search-bar mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-2">
+                    <input type="text" class="form-control search-input" id="searchGames" placeholder="Search games...">
+                </div>
+                <div class="col-md-2">
+                    <select class="form-control search-input" id="filterGenre">
+                        <option value="">All Genres</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-control search-input" id="filterTag">
+                        <option value="">All Tags</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-control search-input" id="filterPlatform">
+                        <option value="">Platforms</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-control search-input" id="filterYear">
+                        <option value="">All Years</option>
+                    </select>
+                </div>
+                <div class="col-md-2 text-end">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addGameModal">
+                        <i class="fas fa-plus me-2"></i>Add Game
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Games List View -->
+        <div id="games-view">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-bookmark me-2"></i>My Games</h2>
+                <div class="total-hours">
+                    <span class="text-secondary">Total Playtime:</span>
+                    <span class="ms-2 text-accent" id="totalPlaytime">0 hours</span>
+                </div>
+            </div>
+            <div id="games-list" class="row"></div>
+        </div>
+
+        <!-- To Be Played View -->
+        <div id="toplay-view" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-list-check me-2"></i>Games To Play</h2>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addToPlayModal">
+                    <i class="fas fa-plus me-2"></i>Add Game
+                </button>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="search-bar mb-4">
+                        <input type="text" class="form-control search-input" id="searchToPlay" placeholder="Search games to play...">
+                    </div>
+                </div>
+            </div>
+            <div id="toplay-list" class="row"></div>
+        </div>
+
+        <!-- Settings View -->
+        <div id="settings-view" style="display: none;">
+            <h2 class="mb-4"><i class="fas fa-cog me-2"></i>Settings</h2>
+            <div class="stats-container mb-4">
+                <h4 class="mb-4">Data Management</h4>
+                <div class="d-flex gap-3">
+                    <button class="btn btn-primary" onclick="exportData()">
+                        <i class="fas fa-download me-2"></i>Export Data
+                    </button>
+                    <div class="d-flex align-items-center">
+                        <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+                        <button class="btn btn-outline-primary" onclick="document.getElementById('importFile').click()">
+                            <i class="fas fa-upload me-2"></i>Import Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="stats-container mb-4">
+                <h4 class="mb-4">RAWG API Configuration</h4>
+                <div class="mb-3">
+                    <label class="form-label">RAWG API Key</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="rawgApiKey" placeholder="Enter your RAWG API Key">
+                        <button class="btn btn-primary" onclick="saveApiKey()">
+                            <i class="fas fa-save me-2"></i>Save
+                        </button>
+                    </div>
+                    <small class="text-secondary">Get your API key from <a href="https://rawg.io/apidocs" target="_blank">RAWG.io</a></small>
+                </div>
+            </div>
+
+            <div class="stats-container">
+                <h4 class="mb-4">Game Images</h4>
+                <div>
+                    <button class="btn btn-primary" onclick="updateAllGameImages()" id="updateImagesBtn">
+                        <i class="fas fa-sync me-2"></i>Update Game Images
+                    </button>
+                    <div class="progress mt-3" id="imageUpdateProgress" style="display: none;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                    </div>
+                    <small class="text-secondary d-block mt-2">This will download and save images for all games in your library.</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics View -->
+        <div id="stats-view" style="display: none;">
+            <h2 class="mb-4"><i class="fas fa-chart-pie me-2"></i>Gaming Statistics</h2>
+            
+            <!-- Summary Cards -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="stats-container">
+                        <h5><i class="fas fa-clock me-2"></i>Total Hours</h5>
+                        <h3 id="totalHours" class="stat-value">0</h3>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-container">
+                        <h5><i class="fas fa-gamepad me-2"></i>Total Games</h5>
+                        <h3 id="totalGames" class="stat-value">0</h3>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-container">
+                        <h5><i class="fas fa-star me-2"></i>Most Played Genre</h5>
+                        <h3 id="topGenre" class="stat-value">-</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="stats-container">
+                        <h4><i class="fas fa-tags me-2"></i>Hours by Genre</h4>
+                        <div id="genre-stats"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="stats-container">
+                        <h4><i class="fas fa-hashtag me-2"></i>Hours by Tag</h4>
+                        <div id="tag-stats"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Game Modal -->
+    <div class="modal fade" id="addGameModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Played Game</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addGameForm">
+                        <div class="mb-3">
+                            <label class="form-label">Title</label>
+                            <input type="text" class="form-control" id="gameTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Genre</label>
+                            <input type="text" class="form-control" id="gameGenre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tags (comma separated)</label>
+                            <input type="text" class="form-control" id="gameTags">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Platform</label>
+                            <input type="text" class="form-control" id="gamePlatform" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Hours Played</label>
+                            <input type="number" class="form-control" id="gameHours" value="0" min="0" step="0.1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Rating (0-10)</label>
+                            <input type="number" class="form-control" id="gameRating" value="0" min="0" max="10" step="0.5" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Difficulty Level</label>
+                            <select class="form-control" id="gameDifficulty" required>
+                                <option value="A">A (Easy Peasy)</option>
+                                <option value="AA">AA (Medium)</option>
+                                <option value="AAA">AAA (Is this Dark Souls?)</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveGame">Save Game</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add To Play Modal -->
+    <div class="modal fade" id="addToPlayModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Game To Play</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addToPlayForm">
+                        <div class="mb-3">
+                            <label class="form-label">Title</label>
+                            <input type="text" class="form-control" id="toPlayTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Genre</label>
+                            <input type="text" class="form-control" id="toPlayGenre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tags (comma separated)</label>
+                            <input type="text" class="form-control" id="toPlayTags">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveToPlay">Save Game</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Game Modal -->
+    <div class="modal fade" id="editGameModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Game</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editGameForm">
+                        <input type="hidden" id="editGameId">
+                        <div class="mb-3">
+                            <label class="form-label">Title</label>
+                            <input type="text" class="form-control" id="editGameTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Genre</label>
+                            <input type="text" class="form-control" id="editGameGenre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tags (comma separated)</label>
+                            <input type="text" class="form-control" id="editGameTags">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Platform</label>
+                            <input type="text" class="form-control" id="editGamePlatform" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Hours Played</label>
+                            <input type="time" class="form-control" id="editGameHours" value="00:00" step="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Rating (0-10)</label>
+                            <input type="number" class="form-control" id="editGameRating" value="0" min="0" max="10" step="0.5" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Completion Date</label>
+                            <input type="date" class="form-control" id="editGameCompletionDate">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Difficulty Level</label>
+                            <select class="form-control" id="editGameDifficulty" required>
+                                <option value="A">A (Easy Peasy)</option>
+                                <option value="AA">AA (Medium)</option>
+                                <option value="AAA">AAA (Is this Dark Souls?)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="editGameFinished">
+                                <label class="form-check-label" for="editGameFinished">
+                                    Mark as Finished
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mt-4 border-top pt-3 d-flex justify-content-between">
+                            <button type="button" class="btn btn-danger" onclick="deleteGame()" id="deleteGameBtn">
+                                <i class="fas fa-trash-alt me-2"></i>Delete Game
+                            </button>
+                            <div>
+                                <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" id="saveEditGame">Save Changes</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clear Data Button -->
+    <div class="position-fixed bottom-0 end-0 p-3">
+        <button class="btn btn-danger" id="clearDataBtn">
+            <i class="fas fa-trash-alt me-2"></i>Clear All Data
+        </button>
+    </div>
+
+    <script src="lib/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="scripts/app.js"></script>
+</body>
+</html>

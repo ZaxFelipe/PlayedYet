@@ -1,0 +1,31 @@
+{
+  "name": "playedyet",
+  "version": "1.0.0",
+  "description": "A game tracking application built with Electron",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "make:portable": "electron-builder --win portable"
+  },
+  "build": {
+    "appId": "com.playedyet.app",
+    "productName": "PlayedYet",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "icon": "src/assets/icon.ico",
+      "target": "portable",
+      "executableName": "PlayedYet",
+      "requestedExecutionLevel": "asInvoker"
+    },
+    "portable": {
+      "splashImage": "src/assets/icon.ico",
+      "artifactName": "PlayedYet-Portable.exe"
+    }
+  },
+  "devDependencies": {
+    "electron": "^latest_version",
+    "electron-builder": "^latest_version"
+  }
+}
