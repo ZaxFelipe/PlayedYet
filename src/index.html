@@ -288,7 +288,8 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Hours Played</label>
-                            <input type="time" class="form-control" id="editGameHours" value="00:00" step="1" required>
+                            <input type="text" class="form-control" id="editGameHours" value="00:00" pattern="[0-9]+:[0-5][0-9]" placeholder="HH:MM (ex: 45:30)" title="Format: HH:MM where hours can be any number (e.g., 45:30)" required>
+                            <small class="form-text text-white">Format hh:mm</small>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Rating (0-10)</label>
