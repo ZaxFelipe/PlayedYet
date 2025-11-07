@@ -354,6 +354,7 @@ saveGameBtn.addEventListener('click', async () => {
     const tags = document.getElementById('gameTags').value.split(',').map(tag => tag.trim());
     const hours = parseFloat(document.getElementById('gameHours').value);
     const rating = parseFloat(document.getElementById('gameRating').value);
+    const platform = document.getElementById('gamePlatform').value;
     const difficulty = document.getElementById('gameDifficulty').value;
 
     const game = {
